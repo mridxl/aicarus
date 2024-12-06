@@ -5,8 +5,9 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 export const aiSummarise = async (diff: string) => {
-  const res = await model.generateContent([
-    `You are an expert programmer, and you are trying to summarize a git diff.
+  try {
+    const res = await model.generateContent([
+      `You are an expert programmer, and you are trying to summarize a git diff.
 Reminders about the git diff format:
 For every file, there are a few metadata lines, like (for example):
 \`\`\`
@@ -34,10 +35,14 @@ Most commits will have less comments than this examples list.
 The last comment does not include the file names, because there were more than two relevant files in the hypothetical commit.
 Do not include parts of the example in your summary.
 It is given only as an example of appropriate comments.`,
-    `Please summarise the following diff file: \n\n${diff}`,
-  ]);
+      `Please summarise the following diff file: \n\n${diff}`,
+    ]);
 
-  return res.response.text();
+    return res.response.text();
+  } catch (error) {
+    console.error(error);
+    return "Rate limited response since i am using a free tier";
+  }
 };
 
 export const summariseCode = async (doc: Document) => {
@@ -53,8 +58,9 @@ export const summariseCode = async (doc: Document) => {
       Give a summary no more than 100 words of the code above`,
     ]);
     return res.response.text();
-  } catch {
-    return "";
+  } catch (error) {
+    console.error(error);
+    return "Rate limited response since i am using a free tier";
   }
 };
 
