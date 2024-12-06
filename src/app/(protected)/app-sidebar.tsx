@@ -100,6 +100,7 @@ export function AppSidebar() {
                       onClick={() => {
                         setProjectId(project.id);
                       }}
+                      className="cursor-pointer"
                     >
                       <div
                         className={cn(
