@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { Document } from "@langchain/core/documents";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -37,4 +38,33 @@ It is given only as an example of appropriate comments.`,
   ]);
 
   return res.response.text();
+};
+
+export const summariseCode = async (doc: Document) => {
+  try {
+    const code = doc.pageContent.slice(0, 10000); // Limiting to 10k characters
+    const res = await model.generateContent([
+      `You are an intelligent senior software engineer who specializes in onboarding junior software engineers onto projects.`,
+      `You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file.
+      Here is the code:
+      ----
+      ${code}
+      ----
+      Give a summary no more than 100 words of the code above`,
+    ]);
+    return res.response.text();
+  } catch {
+    return "";
+  }
+};
+
+export const generateEmbedding = async (summary: string) => {
+  const embeddingModel = genAI.getGenerativeModel({
+    model: "text-embedding-004",
+  });
+  // Embed the summary
+  const result = await embeddingModel.embedContent(summary);
+  const embedding = result.embedding;
+  // Return the embedding - a vector of 768 dimensions and type number[]
+  return embedding.values;
 };
