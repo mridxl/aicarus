@@ -3,6 +3,25 @@
 @tailwind utilities;
 
 @layer base {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track-piece {
+    background-color: #fff;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #cbcbcb;
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+    border: 0.1px solid #b7b7b7;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #909090;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
