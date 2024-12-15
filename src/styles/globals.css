@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.wmde-markdown ul {
+  list-style: disc;
+}
+
+.wmde-markdown ol {
+  list-style: decimal;
+}
+
 @layer base {
   ::-webkit-scrollbar {
     width: 8px;
