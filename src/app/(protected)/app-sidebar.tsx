@@ -94,7 +94,7 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {projects?.map((project, index) => (
-                <SidebarMenuItem key={project.name}>
+                <SidebarMenuItem key={project.name + index}>
                   <SidebarMenuButton asChild>
                     <div
                       onClick={() => {
