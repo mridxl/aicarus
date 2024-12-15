@@ -40,7 +40,11 @@ const CreatePage = () => {
   }
   return (
     <div className="flex h-full items-center justify-center gap-12">
-      <img src="/undraw-hacker.svg" alt="Create" className="h-56 w-auto" />
+      <img
+        src="/undraw-hacker.svg"
+        alt="Create"
+        className="h-56 w-auto max-sm:hidden"
+      />
       <div>
         <div className="text-2xl font-semibold">
           Link your Github repository
