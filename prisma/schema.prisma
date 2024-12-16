@@ -21,9 +21,10 @@ model User {
   firstName String?
   lastName  String?
 
-  emailAddress  String          @unique
-  credits       Int             @default(150)
-  UserToProject UserToProject[]
+  emailAddress   String          @unique
+  credits        Int             @default(150)
+  userToProjects UserToProject[] //projects assigned to the user
+  askedQuestions Question[] //questions asked by the user
 }
 
 model Project {
@@ -34,10 +35,11 @@ model Project {
   name      String
   githubUrl String
 
-  deletedAt           DateTime?
-  UserToProject       UserToProject[]
-  commits             Commit[]
-  SourceCodeEmbedding SourceCodeEmbedding[]
+  deletedAt            DateTime?
+  userToProject        UserToProject[] //users assigned to the project
+  commits              Commit[] //commits made to the project
+  sourceCodeEmbeddings SourceCodeEmbedding[] //source code embeddings of the project
+  savedQuestions       Question[] //questions saved by the user
 }
 
 model UserToProject {
@@ -51,7 +53,24 @@ model UserToProject {
   project   Project @relation(fields: [projectId], references: [id])
   projectId String
 
-  @@unique([userId, projectId])
+  @@unique([userId, projectId]) // A user can only be assigned to a project once
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  question String
+  answer   String
+
+  filesReferences Json?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Commit {
@@ -60,7 +79,7 @@ model Commit {
   updatedAt DateTime @updatedAt
 
   projectId String
-  Project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id])
 
   commitMessage      String
   commitHash         String
@@ -80,5 +99,5 @@ model SourceCodeEmbedding {
   summary          String //Ai generated summary of the source code
 
   projectId String
-  project   Project @relation(fields: [projectId], references: [id]) //project that the source code belongs to
+  project   Project @relation(fields: [projectId], references: [id]) //project to which the source code belongs
 }
