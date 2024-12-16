@@ -15,6 +15,13 @@ import { toast } from "sonner";
 const InviteButton = () => {
   const { projectId } = useProject();
   const [open, setOpen] = React.useState(false);
+  const [origin, setOrigin] = React.useState("");
+
+  // not using window directly in the Input since window is not available in SSR when the component is rendered for the first time.
+  // so, using useEffect ensures that the value is set only after the component is mounted.
+  React.useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
 
   return (
     <>
@@ -27,13 +34,11 @@ const InviteButton = () => {
             Ask them to copy and paste this link
           </p>
           <Input
-            value={`${window.location.origin}/join/${projectId}`}
+            value={`${origin}/join/${projectId}`}
             readOnly
             className="mt-2"
             onClick={() => {
-              navigator.clipboard.writeText(
-                `${window.location.origin}/join/${projectId}`,
-              );
+              navigator.clipboard.writeText(`${origin}/join/${projectId}`);
               toast.success("Link copied to clipboard");
             }}
           />
