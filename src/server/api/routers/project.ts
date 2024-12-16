@@ -59,6 +59,9 @@ export const projectRouter = createTRPCRouter({
         where: {
           projectId: input.projectId,
         },
+        orderBy: {
+          createdAt: "desc",
+        },
       });
     }),
 
