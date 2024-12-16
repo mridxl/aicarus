@@ -4,6 +4,8 @@ import { ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
 import CommitLog from "./commit-log";
 import AskQuestionCard from "./ask-question-card";
+import ArchiveButton from "./archive-button";
+import InviteButton from "./invite-button";
 
 const Dashboard = () => {
   const { currentProject } = useProject();
@@ -32,15 +34,15 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="h-4"></div>
+        {/* Project management and collaboration */}
         <div className="flex items-center gap-4">
-          team members archuve button invite button
+          <InviteButton />
+          <ArchiveButton />
         </div>
       </div>
       {/* Main content */}
       <div className="mt-4">
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
-          <AskQuestionCard /> MeetingCard
-        </div>
+        <AskQuestionCard />
       </div>
       <div className="mt-8">
         <CommitLog />

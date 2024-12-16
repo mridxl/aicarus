@@ -13,6 +13,7 @@ const ArchiveButton = () => {
 
   return (
     <Button
+      size="sm"
       variant="destructive"
       onClick={() => {
         const confirm = window.confirm(
