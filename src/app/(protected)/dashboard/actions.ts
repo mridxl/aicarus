@@ -65,7 +65,6 @@ The AI assistant will take into account any CONTEXT BLOCK that is provided in a 
 If the context does not provide the answer to the question, the AI assistant will say, "I'm sorry I don't have the answer to that question."
 It will not explain why it does not have the answer.
 The AI assistant will not apologize for previous responses but will instead indicate that new information was gained.
-The AI assistant will not invent anything that is not drawn directly from the context.
 Answer in markdown syntax, with code snippets if needed. Be as detailed as possible when answering, and make sure there are no mistakes in the answer.
 `,
     });
