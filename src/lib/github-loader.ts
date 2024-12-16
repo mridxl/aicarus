@@ -46,10 +46,10 @@ const loadGithubRepo = async (githubUrl: string, githubToken?: string) => {
   const loader = new GithubRepoLoader(githubUrl, {
     accessToken: githubToken || process.env.GITHUB_ACCESS_TOKEN,
     branch: "main",
-    ignoreFiles: [
+    ignorePaths: [
       "node_modules",
       ".git",
-      "**/package-lock.json", // Use ** to match all nested occurrences
+      "**/package-lock.json",
       "**/yarn.lock",
       "**/pnpm-lock.yaml",
       "**/bun.lockb",
@@ -66,7 +66,6 @@ const loadGithubRepo = async (githubUrl: string, githubToken?: string) => {
       "**/*.mp3",
       "**/*.avi",
       "**/*.mov",
-      // what all other files should i typically ignore?
     ],
     recursive: true,
     unknown: "warn",
