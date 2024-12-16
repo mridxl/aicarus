@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import useRefetch from "@/hooks/use-refetch";
 import { api } from "@/trpc/react";
 import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -18,8 +19,11 @@ const CreatePage = () => {
   const { register, handleSubmit, reset } = useForm<FormInput>();
   const createProject = api.project.createProject.useMutation();
   const refetch = useRefetch();
+  const router = useRouter();
 
   function onSubmit(data: FormInput) {
+    const creatingToast = toast.loading("Creating project...");
+
     createProject.mutate(
       {
         githubUrl: data.repoUrl,
@@ -28,11 +32,14 @@ const CreatePage = () => {
       },
       {
         onSuccess: () => {
+          toast.dismiss(creatingToast);
           toast.success("Project created successfully");
           refetch();
+          router.push("/dashboard");
           reset();
         },
         onError: (error) => {
+          toast.dismiss(creatingToast);
           toast.error("Failed to create project: " + error.message);
         },
       },
