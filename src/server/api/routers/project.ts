@@ -41,6 +41,7 @@ export const projectRouter = createTRPCRouter({
             userId: ctx.user.userId!,
           },
         },
+        deletedAt: null,
       },
     });
   }),
@@ -100,6 +101,24 @@ export const projectRouter = createTRPCRouter({
         },
         orderBy: {
           createdAt: "desc",
+        },
+      });
+    }),
+
+  // Archive a project
+  archiveProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.project.update({
+        where: {
+          id: input.projectId,
+        },
+        data: {
+          deletedAt: new Date(), //works because when we query for projects we filter out deleted ones by checking if deletedAt is null
         },
       });
     }),
