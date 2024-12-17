@@ -12,9 +12,13 @@ import React from "react";
 import AskQuestionCard from "../dashboard/ask-question-card";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import CodeReferences from "../dashboard/code-references";
+import NoProject from "../no-project";
 
 const QaPage = () => {
   const { projectId } = useProject();
+
+  if (!projectId || projectId === "") return <NoProject />;
+
   const { data: questions } = api.project.getQuestions.useQuery({ projectId });
 
   const [questionIndex, setQuestionIndex] = React.useState(0);
