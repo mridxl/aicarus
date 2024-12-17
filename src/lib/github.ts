@@ -1,8 +1,7 @@
 import { db } from "@/server/db";
 import { Octokit } from "octokit";
 import axios from "axios";
-//// import { aiSummarise } from "./gemini";
-import { aiSummarise } from "./gemini-broke";
+import { aiSummarise } from "./gemini";
 
 export const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,

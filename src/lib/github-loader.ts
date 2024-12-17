@@ -1,7 +1,6 @@
 import { GithubRepoLoader } from "@langchain/community/document_loaders/web/github";
 import { Document } from "@langchain/core/documents";
-//// import { generateEmbedding, summariseCode } from "./gemini";
-import { generateEmbedding, summariseCode } from "./gemini-broke"; // For free tier
+import { generateEmbedding, summariseCode } from "./gemini";
 import { db } from "@/server/db";
 
 /**
