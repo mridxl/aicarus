@@ -3,12 +3,18 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
+  DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import useProject from "@/hooks/use-project";
+import { Copy } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
 
@@ -25,33 +31,49 @@ const InviteButton = () => {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog modal={true}>
+        <DialogTrigger asChild>
+          <Button size="sm">Invite Members</Button>
+        </DialogTrigger>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invite team members</DialogTitle>
+            <DialogDescription>
+              Ask them to copy and paste this link
+            </DialogDescription>
           </DialogHeader>
-          <p className="text-sm text-gray-500">
-            Ask them to copy and paste this link
-          </p>
-          <Input
-            value={`${origin}/join/${projectId}`}
-            readOnly
-            className="mt-2"
-            onClick={() => {
-              navigator.clipboard.writeText(`${origin}/join/${projectId}`);
-              toast.success("Link copied to clipboard");
-            }}
-          />
+          <div className="flex items-center space-x-2">
+            <div className="grid flex-1 gap-2">
+              <Label htmlFor="link" className="sr-only">
+                Link
+              </Label>
+              <Input
+                id="link"
+                defaultValue={`${origin}/join/${projectId}`}
+                readOnly
+              />
+            </div>
+            <Button
+              type="submit"
+              size="sm"
+              className="px-3"
+              onClick={() => {
+                navigator.clipboard.writeText(`${origin}/join/${projectId}`);
+                toast.success("Link copied to clipboard");
+              }}
+            >
+              <span className="sr-only">Copy</span>
+              <Copy />
+            </Button>
+          </div>
+
+          <DialogFooter className="sm:justify-start">
+            <DialogClose asChild>
+              <Button type="button">Close</Button>
+            </DialogClose>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Button
-        size="sm"
-        onClick={() => {
-          setOpen(true);
-        }}
-      >
-        Invite Members
-      </Button>
     </>
   );
 };
