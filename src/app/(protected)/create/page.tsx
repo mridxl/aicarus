@@ -22,6 +22,15 @@ const CreatePage = () => {
   const router = useRouter();
 
   function onSubmit(data: FormInput) {
+    const githubRepoRegex =
+      /^https?:\/\/(www\.)?github\.com\/[A-Za-z0-9_-]+\/[A-Za-z0-9_.-]+(\/)?$/;
+    const isValidUrl = githubRepoRegex.test(data.repoUrl);
+
+    if (!isValidUrl) {
+      toast.error("Invalid GitHub URL");
+      return;
+    }
+
     const creatingToast = toast.loading("Creating project...");
 
     createProject.mutate(
