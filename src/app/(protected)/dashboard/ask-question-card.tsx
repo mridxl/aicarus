@@ -120,7 +120,7 @@ const AskQuestionCard = () => {
         <CardContent>
           <form onSubmit={onSubmit}>
             <Textarea
-              placeholder="Which file should i edit to change the homepage?"
+              placeholder="Ask questions related to the codebase here..."
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
