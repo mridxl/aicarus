@@ -6,9 +6,15 @@ import CommitLog from "./commit-log";
 import AskQuestionCard from "./ask-question-card";
 import ArchiveButton from "./archive-button";
 import InviteButton from "./invite-button";
+import TeamMembers from "./team-members";
+import NoProject from "../no-project";
 
 const Dashboard = () => {
   const { currentProject } = useProject();
+
+  if (!currentProject) {
+    return <NoProject />;
+  }
 
   return (
     <div>
@@ -36,6 +42,7 @@ const Dashboard = () => {
         <div className="h-4"></div>
         {/* Project management and collaboration */}
         <div className="flex items-center gap-4">
+          <TeamMembers />
           <InviteButton />
           <ArchiveButton />
         </div>

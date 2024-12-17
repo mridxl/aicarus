@@ -10,7 +10,6 @@ import React from "react";
 const TeamMembers = () => {
   const { projectId } = useProject();
   const { data: members } = api.project.getTeamMembers.useQuery({ projectId });
-  console.log(members);
 
   return (
     <div className="inline-flex flex-row-reverse">
