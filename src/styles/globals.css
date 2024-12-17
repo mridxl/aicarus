@@ -10,6 +10,17 @@
   list-style: decimal;
 }
 
+.avatar {
+  position: relative;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  overflow: hidden;
+  /* width: 100px; */
+}
+.avatar:not(:first-child) {
+  margin-right: -0.5rem;
+}
+
 @layer base {
   ::-webkit-scrollbar {
     width: 8px;
