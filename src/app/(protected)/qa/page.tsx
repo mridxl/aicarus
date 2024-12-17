@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/sheet";
 import useProject from "@/hooks/use-project";
 import { api } from "@/trpc/react";
-import React from "react";
+import React, { useEffect } from "react";
 import AskQuestionCard from "../dashboard/ask-question-card";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import CodeReferences from "../dashboard/code-references";
@@ -16,14 +16,19 @@ import NoProject from "../no-project";
 
 const QaPage = () => {
   const { projectId } = useProject();
-
-  if (!projectId || projectId === "") return <NoProject />;
-
+  const [isMounted, setIsMounted] = React.useState(false);
   const { data: questions } = api.project.getQuestions.useQuery({ projectId });
 
   const [questionIndex, setQuestionIndex] = React.useState(0);
   const currentQuestion = questions?.[questionIndex];
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) return null;
+
+  if (!projectId || projectId === "") return <NoProject />;
   return (
     <Sheet>
       <AskQuestionCard />
@@ -65,7 +70,9 @@ const QaPage = () => {
           aria-describedby={undefined}
         >
           <SheetHeader>
-            <SheetTitle>{currentQuestion.question}</SheetTitle>
+            <SheetTitle className="mb-2 mr-3 max-h-[40vh] overflow-x-clip overflow-y-scroll text-base">
+              {currentQuestion.question}
+            </SheetTitle>
             <MarkdownPreview
               source={currentQuestion.answer}
               className="!h-full max-h-[40vh] max-w-[65vw] overflow-auto rounded-md p-5"
