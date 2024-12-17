@@ -125,9 +125,18 @@ const AskQuestionCard = () => {
               onChange={(e) => setQuestion(e.target.value)}
             />
             <div className="h-4"></div>
-            <Button type="submit" disabled={loading || question.length === 0}>
-              Ask Aicarus!
-            </Button>
+            <div className="flex items-center justify-start gap-3">
+              <Button type="submit" disabled={loading || question.length === 0}>
+                Ask Aicarus!
+              </Button>
+              <Button
+                type="reset"
+                variant="destructive"
+                onClick={() => setQuestion("")}
+              >
+                Clear question
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
