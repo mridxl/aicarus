@@ -9,14 +9,19 @@ const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+// Assuming one token is roughly 4 characters long
+function estimateTokenCount(text: string): number {
+  return Math.ceil(text.length / 4);
+}
+
 export async function askQuestion(question: string, projectId: string) {
   const stream = createStreamableValue();
   const queryVector = await generateEmbedding(question);
 
-  // Convert the query vector (array of numbers) into a string for use in the database query.
+  // Convert the query vector (array of numbers) into a string for use in the database query
   const vectorQuery = `[${queryVector.join(",")}]`;
 
-  // Query the database to find the most relevant source code files based on the similarity of the question embedding.
+  // Query the database to find the most relevant source code files based on the similarity of the question embedding
   const result = (await db.$queryRaw`
   SELECT "fileName", "sourceCode", "summary",
   1 - ("summaryEmbedding" <-> ${vectorQuery}::vector) AS similarity
@@ -27,12 +32,45 @@ export async function askQuestion(question: string, projectId: string) {
   LIMIT 10
   `) as { fileName: string; sourceCode: string; summary: string }[];
 
-  console.log(result);
-
   let context = "";
+  let contextFiles = result;
 
-  for (const doc of result) {
-    context += `source: ${doc.fileName} \n Code content:  ${doc.sourceCode} \n summary of file: ${doc.summary} \n`;
+  // If similarity search returns empty, fetch all files for the project with token limit
+  if (result.length === 0) {
+    const allFiles = (await db.$queryRaw`
+    SELECT "fileName", "sourceCode", "summary"
+    FROM "SourceCodeEmbedding"
+    WHERE "projectId" = ${projectId}
+    `) as { fileName: string; sourceCode: string; summary: string }[];
+
+    const sortedFiles = allFiles.sort(
+      (a, b) => (a.summary?.length || 0) - (b.summary?.length || 0),
+    );
+
+    // Trying not to exceed the token limit
+    const MAX_TOKENS = 900000;
+    let currentTokenCount = 0;
+
+    for (const file of sortedFiles) {
+      const fileTokens = estimateTokenCount(
+        `source: ${file.fileName} \n Code content: ${file.sourceCode} \n summary of file: ${file.summary} \n`,
+      );
+
+      if (currentTokenCount + fileTokens <= MAX_TOKENS) {
+        context += `source: ${file.fileName} \n Code content: ${file.sourceCode} \n summary of file: ${file.summary} \n`;
+        currentTokenCount += fileTokens;
+      } else {
+        break; // Stop adding files if we're approaching the token limit
+      }
+    }
+
+    // Still returning an empty array for contextFiles to indicate that the context is not from the similarity search
+    contextFiles = [];
+  } else {
+    // Returning the normal context files if the similarity search returned results
+    for (const doc of result) {
+      context += `source: ${doc.fileName} \n Code content:  ${doc.sourceCode} \n summary of file: ${doc.summary} \n`;
+    }
   }
 
   // Query the database to find the most relevant source code files based on the similarity of the question embedding.
@@ -61,7 +99,7 @@ ${question}
 
 END OF QUESTION
 
-The AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.'
+The AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
 If no context is provided, it will inform the user that it does not have the information to answer the question since the AI is context-aware and no context was provided.
 If the context does not provide the answer to the question, the AI assistant will say, "I'm sorry I don't have the answer to that question. Try rephrasing the question".
 The AI assistant will not apologize for previous responses but will instead indicate that new information was gained.
@@ -77,6 +115,6 @@ Answer in markdown syntax, with code snippets if needed. Be as detailed as possi
 
   return {
     output: stream.value,
-    filesReferences: result,
+    filesReferences: contextFiles,
   };
 }
