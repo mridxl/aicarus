@@ -11,10 +11,11 @@ import { db } from "@/server/db";
 export const indexGithubRepo = async (
   projectid: string,
   githubUrl: string,
+  branch?: string,
   githubToken?: string,
 ) => {
   // loading all the docs from the github repo
-  const docs = await loadGithubRepo(githubUrl, githubToken);
+  const docs = await loadGithubRepo(githubUrl, branch, githubToken);
   console.log(`Loaded ${docs.length} documents from ${githubUrl}`);
   // summarises the code and generates embeddings of the summary
   const allEmbeddings = await generateEmbeddings(docs);
@@ -41,10 +42,14 @@ export const indexGithubRepo = async (
 };
 
 // Function to load all documents from a GitHub repository
-const loadGithubRepo = async (githubUrl: string, githubToken?: string) => {
+const loadGithubRepo = async (
+  githubUrl: string,
+  branch?: string,
+  githubToken?: string,
+) => {
   const loader = new GithubRepoLoader(githubUrl, {
     accessToken: githubToken || process.env.GITHUB_ACCESS_TOKEN,
-    branch: "main",
+    branch: branch || "main",
     ignorePaths: [
       "node_modules",
       ".git",

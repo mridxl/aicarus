@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { pollCommits } from "@/lib/github";
 import { indexGithubRepo } from "@/lib/github-loader";
+import { TRPCError } from "@trpc/server";
 
 export const projectRouter = createTRPCRouter({
   // Create a new project for the current user
@@ -11,6 +12,7 @@ export const projectRouter = createTRPCRouter({
       z.object({
         name: z.string(),
         githubUrl: z.string(),
+        branch: z.string().optional(),
         githubToken: z.string().optional(),
       }),
     )
@@ -28,7 +30,26 @@ export const projectRouter = createTRPCRouter({
         },
       });
       await pollCommits(project.id);
-      await indexGithubRepo(project.id, input.githubUrl, input.githubToken);
+      try {
+        await indexGithubRepo(
+          project.id,
+          input.githubUrl,
+          input.branch,
+          input.githubToken,
+        );
+      } catch (error) {
+        // If indexing fails, we should delete the project and inform the user
+        await ctx.db.project.delete({
+          where: {
+            id: project.id,
+          },
+        });
+
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "The branch may not exist or the repository may be empty.",
+        });
+      }
       return project;
     }),
 
