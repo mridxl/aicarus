@@ -12,6 +12,7 @@ import { toast } from "sonner";
 type FormInput = {
   repoUrl: string;
   projectName: string;
+  branch?: string;
   githubToken?: string;
 };
 
@@ -37,6 +38,7 @@ const CreatePage = () => {
       {
         githubUrl: data.repoUrl,
         name: data.projectName,
+        branch: data.branch,
         githubToken: data.githubToken,
       },
       {
@@ -80,6 +82,7 @@ const CreatePage = () => {
               This will be the name of the project in Aicarus
             </span>
             <div className="h-2"></div>
+
             <Input
               {...register("repoUrl", { required: true })}
               placeholder="Github URL"
@@ -90,6 +93,14 @@ const CreatePage = () => {
               Enter the URL of the repository you want to link
             </span>
             <div className="h-2"></div>
+
+            <Input {...register("branch")} placeholder="Branch (Optional)" />
+            <span className="pl-[2px] text-xs text-muted-foreground">
+              This is required if your default branch is not called "main"
+            </span>
+
+            <div className="h-2"></div>
+
             <Input
               {...register("githubToken")}
               placeholder="Github Token (Optional)"
@@ -98,6 +109,7 @@ const CreatePage = () => {
               This is required for private repositories
             </span>
             <div className="h-2"></div>
+
             <Button type="submit" disabled={createProject.isPending}>
               Create Project
               <ArrowRight size={16} className="ml-2" />
