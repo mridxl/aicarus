@@ -47,10 +47,10 @@ model UserToProject {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   projectId String
 
   @@unique([userId, projectId]) // A user can only be assigned to a project once
@@ -67,10 +67,10 @@ model Question {
   filesReferences Json?
 
   projectId String
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Commit {
@@ -79,7 +79,7 @@ model Commit {
   updatedAt DateTime @updatedAt
 
   projectId String
-  project   Project @relation(fields: [projectId], references: [id])
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   commitMessage      String
   commitHash         String
@@ -99,5 +99,5 @@ model SourceCodeEmbedding {
   summary          String //Ai generated summary of the source code
 
   projectId String
-  project   Project @relation(fields: [projectId], references: [id]) //project to which the source code belongs
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade) //project to which the source code belongs
 }
