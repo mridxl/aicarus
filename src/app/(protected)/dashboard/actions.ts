@@ -15,7 +15,6 @@ function estimateTokenCount(text: string): number {
 }
 
 export async function askQuestion(question: string, projectId: string) {
-  const stream = createStreamableValue();
   const queryVector = await generateEmbedding(question);
 
   // Convert the query vector (array of numbers) into a string for use in the database query
@@ -43,15 +42,16 @@ export async function askQuestion(question: string, projectId: string) {
     WHERE "projectId" = ${projectId}
     `) as { fileName: string; sourceCode: string; summary: string }[];
 
-    const sortedFiles = allFiles.sort(
-      (a, b) => (a.summary?.length || 0) - (b.summary?.length || 0),
-    );
+    // const sortedFiles = allFiles.sort(
+    //   (a, b) => (a.summary?.length || 0) - (b.summary?.length || 0),
+    // );
 
     // Trying not to exceed the token limit
     const MAX_TOKENS = 900000;
     let currentTokenCount = 0;
+    context = "INDIRECT CONTEXT: \n\n";
 
-    for (const file of sortedFiles) {
+    for (const file of allFiles) {
       const fileTokens = estimateTokenCount(
         `source: ${file.fileName} \n Code content: ${file.sourceCode} \n summary of file: ${file.summary} \n`,
       );
@@ -74,10 +74,13 @@ export async function askQuestion(question: string, projectId: string) {
   }
 
   // Query the database to find the most relevant source code files based on the similarity of the question embedding.
+  const stream = createStreamableValue();
+
   (async () => {
-    const { textStream } = await streamText({
-      model: google("gemini-1.5-flash"),
-      prompt: `You are an AI code assistant specializing in answering questions about a codebase. Your target audience is a technical intern seeking to understand the codebase.
+    try {
+      const { textStream } = await streamText({
+        model: google("gemini-1.5-flash"),
+        prompt: `You are an AI code assistant specializing in answering questions about a codebase. Your target audience is a technical intern seeking to understand the codebase.
 
 The AI assistant is a brand-new, powerful, human-like artificial intelligence.
 The traits of the AI include expert knowledge, helpfulness, cleverness, and articulateness.
@@ -99,18 +102,22 @@ ${question}
 
 END OF QUESTION
 
-The AI assistant will take into account any CONTEXT BLOCK that is provided in a conversation.
-If no context is provided, it will inform the user that it does not have the information to answer the question since the AI is context-aware and no context was provided.
-If the context does not provide the answer to the question, the AI assistant will say, "I'm sorry I don't have the answer to that question. Try rephrasing the question".
+The AI assistant will take into account the provided CONTEXT BLOCK in the conversation.
+If the context block begins with the text "INDIRECT CONTEXT", the AI assistant will say "I was unable to find information directly relevant to your question in the available code. However, based on the codebase I can see, here's what I can tell you: " and then provide any relevant insights from the available context.
 The AI assistant will not apologize for previous responses but will instead indicate that new information was gained.
 Answer in markdown syntax, with code snippets if needed. Be as detailed as possible when answering, and make sure there are no mistakes in the answer.
 `,
-    });
+      });
 
-    for await (const delta of textStream) {
-      stream.update(delta);
+      for await (const delta of textStream) {
+        stream.update(delta);
+      }
+      stream.done();
+    } catch (error) {
+      console.error(error);
+      stream.update("Failed to answer question!");
+      stream.done();
     }
-    stream.done();
   })();
 
   return {
