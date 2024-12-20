@@ -13,6 +13,7 @@ import AskQuestionCard from "../dashboard/ask-question-card";
 import MarkdownPreview from "@uiw/react-markdown-preview";
 import CodeReferences from "../dashboard/code-references";
 import NoProject from "../no-project";
+import { cn } from "@/lib/utils";
 
 const QaPage = () => {
   const { projectId } = useProject();
@@ -70,12 +71,17 @@ const QaPage = () => {
           aria-describedby={undefined}
         >
           <SheetHeader>
-            <SheetTitle className="mb-2 mr-3 max-h-[40vh] overflow-x-clip overflow-y-scroll text-base">
+            <SheetTitle className="mb-2 mr-3 overflow-x-clip overflow-y-scroll text-base">
               {currentQuestion.question}
             </SheetTitle>
             <MarkdownPreview
               source={currentQuestion.answer}
-              className="!h-full max-h-[40vh] max-w-[65vw] overflow-auto rounded-md p-5"
+              className={cn(
+                (currentQuestion.filesReferences as any[])?.length === 0
+                  ? "max-h-[90vh]"
+                  : "max-h-[40vh]",
+                "max-w-[65vw] overflow-auto rounded-md p-5",
+              )}
             />
             <div className="h-2"></div>
             <CodeReferences
