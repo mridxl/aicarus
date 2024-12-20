@@ -45,15 +45,24 @@ const AskQuestionCard = () => {
 
     setLoading(true);
 
-    const { output, filesReferences } = await askQuestion(
-      question,
-      currentProject.id,
-    );
-    setOpen(true);
-    setFilesReferences(filesReferences);
+    try {
+      const { output, filesReferences } = await askQuestion(
+        question,
+        currentProject.id,
+      );
 
-    for await (const delta of readStreamableValue(output)) {
-      if (delta) setAnswer((prev) => prev + delta);
+      if (output) setOpen(true);
+
+      setFilesReferences(filesReferences);
+
+      for await (const delta of readStreamableValue(output)) {
+        if (delta) setAnswer((prev) => prev + delta);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to answer question!");
+    } finally {
+      setLoading(false);
     }
 
     setLoading(false);
