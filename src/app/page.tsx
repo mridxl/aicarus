@@ -135,14 +135,14 @@ export default function Home() {
                 className="border-white text-xl text-black hover:bg-white/80"
                 asChild
               >
-                <Link href="/signin">Sign In</Link>
+                <Link href="/sign-in">Sign In</Link>
               </Button>
               <Button
                 size="lg"
                 className="bg-primary text-xl text-white hover:bg-[#15803D]"
                 asChild
               >
-                <Link href="/signup">Sign Up</Link>
+                <Link href="/sign-up">Sign Up</Link>
               </Button>
             </div>
           </div>
