@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useRefetch from "@/hooks/use-refetch";
 import { api } from "@/trpc/react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, CircleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -114,6 +114,15 @@ const CreatePage = () => {
               Create Project
               <ArrowRight size={16} className="ml-2" />
             </Button>
+            <div className="h-2"></div>
+            <div className="flex gap-1 text-xs text-muted-foreground">
+              <CircleAlert size={16} />
+              {/* note that tells users that aicarus only works fine for repos with less than 150 files due to rate limitatuions in gemini free tier */}
+              <span>
+                Aicarus currently works best with repositories with less than
+                150 files due to rate limitations in the Gemini free tier.
+              </span>
+            </div>
           </form>
         </div>
       </div>
