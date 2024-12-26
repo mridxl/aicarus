@@ -19,6 +19,7 @@ import CodeReferences from "./code-references";
 import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import useRefetch from "@/hooks/use-refetch";
+import { cn } from "@/lib/utils";
 
 const AskQuestionCard = () => {
   const { currentProject } = useProject();
@@ -111,7 +112,12 @@ const AskQuestionCard = () => {
           </DialogHeader>
           <MarkdownPreview
             source={answer}
-            className="!h-full max-h-[40vh] max-w-[65vw] overflow-auto rounded-md p-5"
+            className={cn(
+              (filesReferences as any[])?.length === 0
+                ? "max-h-[70vh]"
+                : "max-h-[40vh]",
+              "max-w-[65vw] overflow-auto rounded-md p-5",
+            )}
           />
           <div className="h-3"></div>
           <CodeReferences filesReferences={filesReferences} />
