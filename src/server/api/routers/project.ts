@@ -29,8 +29,8 @@ export const projectRouter = createTRPCRouter({
           },
         },
       });
-      await pollCommits(project.id);
       try {
+        await pollCommits(project.id);
         await indexGithubRepo(
           project.id,
           input.githubUrl,
@@ -47,7 +47,8 @@ export const projectRouter = createTRPCRouter({
 
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "The branch may not exist or the repository may be empty.",
+          message:
+            "The branch may not exist or the repository may be empty. If your url ends with .git, try removing it.",
         });
       }
       return project;
