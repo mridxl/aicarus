@@ -1,5 +1,4 @@
 import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { pollCommits } from "@/lib/github";
 import { indexGithubRepo } from "@/lib/github-loader";
@@ -48,7 +47,7 @@ export const projectRouter = createTRPCRouter({
         throw new TRPCError({
           code: "BAD_REQUEST",
           message:
-            "The branch may not exist or the repository may be empty. If your url ends with .git, try removing it.",
+            "The repository URL or branch is incorrect, or the repository is empty. Please check the repository URL and ensure the default branch is called 'main'.",
         });
       }
       return project;
