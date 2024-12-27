@@ -31,6 +31,10 @@ const CreatePage = () => {
       toast.error("Invalid GitHub URL");
       return;
     }
+    if (data.repoUrl.endsWith(".git")) {
+      toast.error("Please remove .git from the end of the URL");
+      return;
+    }
 
     const creatingToast = toast.loading("Creating project...");
 
