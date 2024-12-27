@@ -20,6 +20,7 @@ import { api } from "@/trpc/react";
 import { toast } from "sonner";
 import useRefetch from "@/hooks/use-refetch";
 import { cn } from "@/lib/utils";
+import { CircleAlert } from "lucide-react";
 
 const AskQuestionCard = () => {
   const { currentProject } = useProject();
@@ -151,6 +152,15 @@ const AskQuestionCard = () => {
               >
                 Clear question
               </Button>
+            </div>
+            <div className="h-4"></div>
+            <div className="inline-flex items-start gap-1 text-xs text-muted-foreground md:text-sm">
+              <CircleAlert size={18} className="hidden md:mt-[1px] md:block" />
+              <span>
+                Note: If you don&apos;t see a code viewer tab below the
+                generated answer, then the AI might be hallucinating. Try
+                rephrasing the question or asking something else for now :(
+              </span>
             </div>
           </form>
         </CardContent>
